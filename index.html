@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,58 +8,45 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         
+        /* Ocultar inicialmente el contenido en inglés */
+        [data-lang="en"] {
+            display: none;
+        }
+
+        /* Ocultar el contenido de la lengua activa */
+        .language-icon-active {
+            display: none !important; /* Ahora oculta completamente el icono activo */
+        }
+
         /* === ESTILOS ESPECÍFICOS PARA IMPRESIÓN (PDF) === */
         @media print {
             /* 1. Reset Global y Layout */
-            body {
-                padding: 0 !important;
-                margin: 0 !important;
-                background-color: #fff !important;
-            }
+            body { padding: 0 !important; margin: 0 !important; background-color: #fff !important; }
 
-            /* Quitar sombras y forzar ancho completo */
-            .max-w-5xl {
-                max-width: none !important;
-            }
-            .shadow-2xl, .transform, .hover\:shadow-primary-accent\/40 {
-                box-shadow: none !important;
-                transform: none !important;
-            }
+            /* Quitar sombras, transiciones y forzar ancho completo */
+            .max-w-5xl { max-width: none !important; }
+            .shadow-2xl, .transform, .hover\:shadow-primary-accent\/40 { box-shadow: none !important; transform: none !important; }
 
             /* 2. Ajustes de Columna Oscura a Claro (Ahorro de Tinta) */
             .md\:col-span-4.bg-secondary-dark {
-                /* Forzar fondo blanco y texto oscuro */
                 background-color: #fff !important;
                 color: #1C2833 !important; 
             }
-            
-            /* Asegurar que el texto dentro de la columna oscura (ahora blanca) sea legible */
-            .md\:col-span-4 .text-white, 
-            .md\:col-span-4 .text-gray-300 {
-                color: #1C2833 !important;
-            }
-            
-            /* Mantener el acento dorado para íconos/títulos */
-            .md\:col-span-4 .text-primary-accent {
-                color: #A58340 !important;
-            }
-            
-            /* Ajustar líneas divisorias para fondo claro */
-            .md\:col-span-4 .border-white\/20,
-            .md\:col-span-4 .border-primary-accent\/50 {
-                border-color: #A58340 !important; /* Usar acento para líneas */
-            }
+            .md\:col-span-4 .text-white, .md\:col-span-4 .text-gray-300 { color: #1C2833 !important; }
+            .md\:col-span-4 .text-primary-accent { color: #A58340 !important; }
+            .md\:col-span-4 .border-white\/20, .md\:col-span-4 .border-primary-accent\/50 { border-color: #A58340 !important; }
 
-            /* 3. Eliminar banda decorativa superior */
-            .hidden.md\:block.absolute.top-0.right-0 {
+            /* 3. Eliminar banda decorativa y selector de idioma */
+            .hidden.md\:block.absolute.top-0.right-0, .language-switcher {
                 display: none !important;
             }
 
+            /* 4. Asegurar que solo se imprima el idioma activo (por defecto, español) */
+            [data-lang="en"] { display: none !important; }
+            [data-lang="es"] { display: block !important; }
+
             /* Ajuste de márgenes de página */
-            @page {
-                size: A4;
-                margin: 1cm;
-            }
+            @page { size: A4; margin: 1cm; }
         }
     </style>
     <script>
@@ -68,8 +55,8 @@
             theme: {
                 extend: {
                     colors: {
-                        'primary-accent': '#A58340', /* Dorado Oscuro - Acento (Antes Naranja Arena) */
-                        'secondary-dark': '#1C2833', /* Carbón Oscuro/Casi Negro - Primario (Antes Gris Pizarra) */
+                        'primary-accent': '#A58340', /* Dorado Oscuro - Acento */
+                        'secondary-dark': '#1C2833', /* Carbón Oscuro/Casi Negro - Primario */
                         'light-bg': '#f5f5f5', /* Fondo Gris Claro */
                     },
                     fontFamily: {
@@ -78,6 +65,47 @@
                 }
             }
         }
+
+        /**
+         * Función para alternar el idioma entre español (es) e inglés (en).
+         * @param {string} lang - El código del idioma al que cambiar ('es' o 'en').
+         */
+        function toggleLanguage(lang) {
+            const allEs = document.querySelectorAll('[data-lang="es"]');
+            const allEn = document.querySelectorAll('[data-lang="en"]');
+            
+            // Ocultar todos los elementos, luego mostrar solo los del idioma deseado
+            allEs.forEach(el => el.style.display = 'none');
+            allEn.forEach(el => el.style.display = 'none');
+
+            const elementsToShow = (lang === 'es' ? allEs : allEn);
+            elementsToShow.forEach(el => {
+                // Restaurar display basado en el tipo de elemento
+                if (el.tagName === 'LI') {
+                    el.style.display = 'list-item';
+                } else if (el.classList.contains('flex')) { // <--- CAMBIO AQUÍ: Si tiene la clase 'flex', se muestra como flex.
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'block'; 
+                }
+            });
+
+            // Ajustar el estado del selector de idioma (ocultando el idioma activo)
+            document.getElementById('lang-es').classList.remove('language-icon-active');
+            document.getElementById('lang-en').classList.remove('language-icon-active');
+            
+            // Si lang es 'es', ocultar 'es'. Si lang es 'en', ocultar 'en'.
+            document.getElementById(`lang-${lang}`).classList.add('language-icon-active');
+
+            // Actualizar atributo lang de la página
+            document.documentElement.lang = lang;
+        }
+
+        // Inicializar el idioma al cargar la página
+        window.onload = () => {
+             // Asegurarse de que el español es el idioma inicial y se muestra
+            toggleLanguage('es');
+        };
     </script>
 </head>
 <body class="bg-light-bg p-4 md:p-10 font-sans">
@@ -87,15 +115,22 @@
         <!-- Contenedor del Encabezado (para la banda naranja y el espaciado en móvil) --><div class="relative pt-8 md:pt-0">
             <!-- Banda superior de color acento para enmarcar el nombre en escritorio. --><div class="hidden md:block absolute top-0 right-0 h-32 w-9/12 bg-primary-accent"></div>
             
+            <!-- Selector de Idioma -->
+            <div class="language-switcher absolute top-4 right-4 md:top-6 md:right-8 z-30 flex space-x-3">
+                <!-- Se oculta el idioma activo usando language-icon-active, se muestra el inactivo -->
+                <span id="lang-es" onclick="toggleLanguage('es')" class="cursor-pointer text-xl font-bold transition duration-200 hover:opacity-100 opacity-100" title="ES">ES</span>
+                <span id="lang-en" onclick="toggleLanguage('en')" class="cursor-pointer text-xl font-bold transition duration-200 hover:opacity-100 opacity-70" title="EN">EN</span>
+            </div>
+            
             <!-- Espaciado para móvil --><div class="h-32 md:hidden"></div>
         </div>
 
         <!-- Contenido Principal en Grid --><div class="grid grid-cols-1 md:grid-cols-12 md:-mt-0">
 
-            <!-- Columna Izquierda: Foto (Centrada), Contacto, Habilidades, Sectores, Intereses (Fondo Oscuro) --><div class="md:col-span-4 bg-secondary-dark text-white p-6 pt-10 md:p-8 md:pt-6 space-y-10 order-2 md:order-1 relative z-10">
+            <!-- Columna Izquierda: Foto, Contacto, Habilidades, Sectores, Intereses (Fondo Oscuro) --><div class="md:col-span-4 bg-secondary-dark text-white p-6 pt-10 md:p-8 md:pt-6 space-y-10 order-2 md:order-1 relative z-10">
 
                 <!-- CONTENEDOR FLEX PARA CENTRAR LA FOTO HORIZONTALMENTE --><div class="flex justify-center mb-12">
-                    <!-- Foto de Perfil (Tamaño aumentado a w-48 h-48) --><div class="w-48 h-48 rounded-full bg-white border-4 border-primary-accent shadow-lg overflow-hidden z-20">
+                    <!-- Foto de Perfil --><div class="w-48 h-48 rounded-full bg-white border-4 border-primary-accent shadow-lg overflow-hidden z-20">
                         <img src="https://aldoorsini.github.io/ALO/pipo.jpg" alt="Aldo Orsini Foto de Perfil"
                             class="object-cover w-full h-full grayscale hover:grayscale-0 transition duration-500"
                             onerror="this.onerror=null; this.src='https://placehold.co/160x160/2F4858/A58340?text=AO'">
@@ -103,7 +138,8 @@
                 </div>
 
                 <!-- Detalles de Contacto --><div class="space-y-3 pt-4 border-b border-white/20 pb-6">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-primary-accent mb-4">Contacto </h2>
+                    <h2 data-lang="es" class="text-sm font-bold uppercase tracking-widest text-primary-accent mb-4">Contacto </h2>
+                    <h2 data-lang="en" class="text-sm font-bold uppercase tracking-widest text-primary-accent mb-4">Contact </h2>
                     <div class="flex items-start space-x-3">
                         <svg class="w-5 h-5 text-primary-accent mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                         <span class="text-xs pl-1">Federal 239. Pueblo Belgrano, 2821 E.R. ARG</span>
@@ -119,79 +155,113 @@
                 </div>
 
                 <!-- SECCIÓN SKILLS (Habilidades) --><div class="space-y-4">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Habilidades</h2>
+                    <h2 data-lang="es" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Habilidades</h2>
+                    <h2 data-lang="en" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Skills</h2>
                     <ul class="space-y-4 text-sm font-light">
                         <li class="flex items-center space-x-3">
                             <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
-                            <span>Análisis de Datos</span>
+                            <span data-lang="es">Análisis de Datos</span>
+                            <span data-lang="en">Data Analysis</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20h-2m2 0a2 2 0 102-2m2 2a2 2 0 102-2M8 12V7m-2 5h4m4 0v-5m-4 5v-5M12 12h-4"/></svg>
-                            <span>Gestión de Equipos</span>
+                            <span data-lang="es">Gestión de Equipos</span>
+                            <span data-lang="en">Team Management</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span>Planificación de Proyectos</span>
+                            <span data-lang="es">Planificación de Proyectos</span>
+                            <span data-lang="en">Project Planning</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.206 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.794 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.794 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.206 18 16.5 18s-3.332.477-4.5 1.253"/></svg>
-                            <span>Documentación</span>
+                            <span data-lang="es">Documentación</span>
+                            <span data-lang="en">Documentation</span>
                         </li>
                         <li class="flex items-center space-x-3">
                             <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 0113 10a18.022 18.022 0 011.952 4.5m-1.952 0a2.296 2.296 0 01-2.26 1.951v.172a2.3 2.3 0 01-2.26-1.951m4.52 0h-4.52M12 10a8.995 8.995 0 014.5 4.5"/></svg>
-                            <span>Buen nivel de inglés</span>
+                            <span data-lang="es">Buen nivel de inglés</span>
+                            <span data-lang="en">Good English Level</span>
                         </li>
                     </ul>
                 </div>
 
                 <!-- SECTORS (Sectores) --><div class="space-y-4">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Sectores</h2>
+                    <h2 data-lang="es" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Sectores</h2>
+                    <h2 data-lang="en" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Sectors</h2>
                     <ul class="list-disc ml-5 text-sm space-y-1.5 font-light">
-                        <li>Inteligencia Artificial</li>
-                        <li>Banca y Finanzas</li>
-                        <li>Bienes de Consumo</li>
-                        <li>Software y Consultoría</li>
-                        <li>Educación y Gobierno</li>
-                        <li>Manufactura</li>
-                        <li>Logística</li>
-                        <li>Telecomunicaciones</li>
-                        <li>Turismo</li>
+                        <li data-lang="es">Inteligencia Artificial</li>
+                        <li data-lang="en">Artificial Intelligence</li>
+                        <li data-lang="es">Banca y Finanzas</li>
+                        <li data-lang="en">Banking and Finance</li>
+                        <li data-lang="es">Bienes de Consumo</li>
+                        <li data-lang="en">Consumer Goods</li>
+                        <li data-lang="es">Software y Consultoría</li>
+                        <li data-lang="en">Software and Consulting</li>
+                        <li data-lang="es">Educación y Gobierno</li>
+                        <li data-lang="en">Education and Government</li>
+                        <li data-lang="es">Manufactura</li>
+                        <li data-lang="en">Manufacturing</li>
+                        <li data-lang="es">Logística</li>
+                        <li data-lang="en">Logistics</li>
+                        <li data-lang="es">Telecomunicaciones</li>
+                        <li data-lang="en">Telecommunications</li>
+                        <li data-lang="es">Turismo</li>
+                        <li data-lang="en">Tourism</li>
                     </ul>
                 </div>
 
                 <!-- INTERESTS (Intereses) --><div class="space-y-4">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Intereses</h2>
+                    <h2 data-lang="es" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Intereses</h2>
+                    <h2 data-lang="en" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Interests</h2>
                     <ul class="space-y-3 text-sm font-light">
                         <li class="flex items-start space-x-3">
                             <span class="text-primary-accent text-xl flex-shrink-0">🏃</span>
-                            <span>Apasionado por múltiples deportes y disciplinas</span>
+                            <span data-lang="es">Apasionado por múltiples deportes y disciplinas</span>
+                            <span data-lang="en">Passionate about multiple sports and disciplines</span>
                         </li>
                         <li class="flex items-start space-x-3">
                             <span class="text-primary-accent text-xl flex-shrink-0">⚽</span>
-                            <span>Fundador y entrenador del Club Deportivo Gurises</span>
+                            <span data-lang="es">Fundador y entrenador del Club Deportivo Gurises</span>
+                            <span data-lang="en">Founder and Coach of Club Deportivo Gurises</span>
                         </li>
                         <li class="flex items-start space-x-3">
                             <span class="text-primary-accent text-xl flex-shrink-0">👨‍👩‍👧‍👦</span>
-                            <span>Mi familia</span>
+                            <span data-lang="es">Mi familia</span>
+                            <span data-lang="en">My family</span>
                         </li>
                     </ul>
                 </div>
 
-                <!-- MÁS SOBRE MÍ (CV y LinkedIn) --><div class="space-y-4">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Más sobre mí</h2>
+                <!-- MÁS SOBRE MÍ (CV y LinkedIn) - SOLUCIÓN DEFINITIVA --><div class="space-y-4">
+                    <h2 data-lang="es" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Más sobre mí</h2>
+                    <h2 data-lang="en" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">More about me</h2>
                     
-                    <!-- CV Descarga (ENLACE ACTUALIZADO) --><a href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini.pdf" target="_blank" class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200">
+                    <!-- CV Descarga - Español - Ya funcionaba bien -->
+                    <a href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini.pdf" target="_blank" 
+                       class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0" 
+                       data-lang="es">
                         <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        <span>CV versión completa</span>
+                        Full CV
                     </a>
                     
-                    <!-- LinkedIn Link --><a href="https://www.linkedin.com/in/aldo-orsini-8a23782/" target="_blank" class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200">
+                    <!-- CV Descarga - Inglés - LIMPIADO el style incorrecto, JS ahora lo restaura como flex -->
+                    <a href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini_EN.pdf" target="_blank" 
+                       class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0" 
+                       data-lang="en">
+                        <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Full CV
+                    </a>
+                    
+                    <!-- LinkedIn Link (Mantenemos la consistencia) -->
+                    <a href="https://www.linkedin.com/in/aldo-orsini-8a23782/" target="_blank" 
+                        class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0">
                         <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                        <span>LinkedIn Profile</span>
+                        LinkedIn Profile
                     </a>
                 </div>
                 
-                <!-- NOTA: Las secciones de Educación y Certificación han sido movidas a la columna derecha. --></div>
+                </div>
 
             <!-- Columna Derecha: Perfil, Experiencia, Educación, Certificación (Fondo Claro) --><div class="md:col-span-8 bg-white p-6 md:p-8 space-y-10 order-1 md:order-2">
 
@@ -201,25 +271,40 @@
                 </header>
                 
                 <!-- Perfil (About Me) --><section class="space-y-4">
-                    <h2 class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                    <h2 data-lang="es" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
                         Perfil
                     </h2>
-                    <p class="text-base text-gray-700 leading-relaxed">
+                    <h2 data-lang="en" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                        Profile
+                    </h2>
+                    <p data-lang="es" class="text-base text-gray-700 leading-relaxed">
                         Profesional con 25 años de trayectoria liderando la transformación digital, innovación y tecnología en grandes corporaciones y PYMES. Mi pasión es construir y dirigir equipos multidisciplinarios con un enfoque de motivación, disciplina y excelencia, generando valor sostenible e impulsando la motivación por el objetivo común. Busco activamente desafíos como consultor, asesor, gerente de proyectos o Product Owner en entornos de vanguardia, con una fuerte curiosidad por la Inteligencia Artificial y la innovación constante.
+                    </p>
+                    <p data-lang="en" class="text-base text-gray-700 leading-relaxed">
+                        Professional with 25 years of experience leading digital transformation, innovation, and technology in large corporations and SMEs. My passion is to build and lead multidisciplinary teams with a focus on motivation, discipline, and excellence, generating sustainable value and driving motivation for the common goal. I actively seek challenges as a consultant, advisor, project manager, or Product Owner in cutting-edge environments, with a strong curiosity for Artificial Intelligence and constant innovation.
                     </p>
                 </section>
 
                 <!-- Experiencia --><section class="space-y-4">
-                    <h2 class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                    <h2 data-lang="es" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
                         Experiencia
+                    </h2>
+                    <h2 data-lang="en" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                        Experience
                     </h2>
 
                     <!-- Bloque de Resumen --><div class="space-y-2">
-                        <h3 class="font-bold text-secondary-dark flex items-center space-x-2 text-lg">
+                        <h3 data-lang="es" class="font-bold text-secondary-dark flex items-center space-x-2 text-lg">
                             <span class="text-primary-accent text-2xl">•</span> <span class="pl-4">Resumen Ejecutivo</span>
                         </h3>
-                        <p class="text-base text-gray-700 leading-relaxed pl-6">
+                        <h3 data-lang="en" class="font-bold text-secondary-dark flex items-center space-x-2 text-lg">
+                            <span class="text-primary-accent text-2xl">•</span> <span class="pl-4">Executive Summary</span>
+                        </h3>
+                        <p data-lang="es" class="text-base text-gray-700 leading-relaxed pl-6">
                             Director de Operaciones / Ingeniería en Bombieri: proyectos enfocados en IA, desarrollo de productos y transformación digital. Gerente de Proyectos y Especialista en TI en distintas firmas: Disney Cruise, Banco Patagonia, Unilever, Coca Cola, GCBA (gobierno), y más. Experiencia en consultoría tecnológica, desarrollo de ERP, comercio electrónico, turismo digital y logística.
+                        </p>
+                        <p data-lang="en" class="text-base text-gray-700 leading-relaxed pl-6">
+                            Director of Operations / Engineering at Bombieri: projects focused on AI, product development, and digital transformation. Project Manager and IT Specialist at various firms: Disney Cruise, Banco Patagonia, Unilever, Coca Cola, GCBA (government), and more. Experience in technology consulting, ERP development, e-commerce, digital tourism, and logistics.
                         </p>
                     </div>
 
@@ -229,13 +314,15 @@
                         <!-- Experiencia Item 1 --><div class="relative mb-6">
                             <div class="w-3 h-3 bg-secondary-dark rounded-full absolute -left-0.5 top-1 transform -translate-x-1/2 border-2 border-primary-accent"></div>
                             <p class="text-sm text-gray-500 font-medium pl-4">2018 - 2025</p>
-                            <p class="text-base font-bold text-secondary-dark pl-4">Director de Operaciones / Ingeniería | Bombieri</p>
+                            <p data-lang="es" class="text-base font-bold text-secondary-dark pl-4">Director de Operaciones / Ingeniería | Bombieri</p>
+                            <p data-lang="en" class="text-base font-bold text-secondary-dark pl-4">Director of Operations / Engineering | Bombieri</p>
                         </div>
 
                         <!-- Experiencia Item 2 --><div class="relative mb-6">
                             <div class="w-3 h-3 bg-secondary-dark rounded-full absolute -left-0.5 top-1 transform -translate-x-1/2 border-2 border-primary-accent"></div>
                             <p class="text-sm text-gray-500 font-medium pl-4">2015 - 2017</p>
-                            <p class="text-base font-bold text-secondary-dark pl-4">Gerente de Proyectos (PM) | IT Synch</p>
+                            <p data-lang="es" class="text-base font-bold text-secondary-dark pl-4">Gerente de Proyectos (PM) | IT Synch</p>
+                            <p data-lang="en" class="text-base font-bold text-secondary-dark pl-4">Project Manager (PM) | IT Synch</p>
                         </div>
 
                         <!-- Experiencia Item 3 --><div class="relative mb-6">
@@ -247,23 +334,31 @@
                 </section>
                 
                 <!-- Educación --><section class="space-y-4">
-                    <h2 class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                    <h2 data-lang="es" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
                         Educación
+                    </h2>
+                    <h2 data-lang="en" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                        Education
                     </h2>
                     <div class="relative pl-6">
                         <div class="absolute w-1 bg-primary-accent/50 h-full left-2 top-0 rounded-full"></div>
                         <div class="relative mb-6">
                             <div class="w-3 h-3 bg-white rounded-full absolute -left-0.5 top-1 transform -translate-x-1/2 border-2 border-primary-accent"></div>
                             <p class="text-sm text-gray-500 font-medium pl-4">1994 - 2000</p>
-                            <h3 class="font-bold text-secondary-dark text-base pl-4">Ingeniero en Sistemas</h3>
-                            <p class="text-sm text-gray-700 pl-4">Universidad Tecnológica Nacional (UTN)</p>
+                            <h3 data-lang="es" class="font-bold text-secondary-dark text-base pl-4">Ingeniero en Sistemas</h3>
+                            <h3 data-lang="en" class="font-bold text-secondary-dark text-base pl-4">Systems Engineer</h3>
+                            <p data-lang="es" class="text-sm text-gray-700 pl-4">Universidad Tecnológica Nacional (UTN)</p>
+                            <p data-lang="en" class="text-sm text-gray-700 pl-4">National Technological University (UTN)</p>
                         </div>
                     </div>
                 </section>
 
                 <!-- Certificación --><section class="space-y-4">
-                    <h2 class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                    <h2 data-lang="es" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
                         Certificación
+                    </h2>
+                    <h2 data-lang="en" class="text-xl font-extrabold uppercase text-secondary-dark border-b-4 border-primary-accent pb-1 inline-block pr-12 tracking-wider">
+                        Certification
                     </h2>
                     <div class="relative pl-6">
                         <div class="absolute w-1 bg-primary-accent/50 h-full left-2 top-0 rounded-full"></div>
