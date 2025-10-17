@@ -83,7 +83,7 @@
                 // Restaurar display basado en el tipo de elemento
                 if (el.tagName === 'LI') {
                     el.style.display = 'list-item';
-                } else if (el.classList.contains('flex')) { // <--- CAMBIO AQUÍ: Si tiene la clase 'flex', se muestra como flex.
+                } else if (el.classList.contains('flex')) { 
                     el.style.display = 'flex';
                 } else {
                     el.style.display = 'block'; 
@@ -233,32 +233,35 @@
                     </ul>
                 </div>
 
-                <!-- MÁS SOBRE MÍ (CV y LinkedIn) - SOLUCIÓN DEFINITIVA --><div class="space-y-4">
+                <!-- MÁS SOBRE MÍ (CV y LinkedIn) - REESTRUCTURADO COMO UL/LI --><div class="space-y-4">
                     <h2 data-lang="es" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">Más sobre mí</h2>
                     <h2 data-lang="en" class="text-sm font-bold uppercase tracking-widest text-primary-accent border-b border-primary-accent/50 pb-1">More about me</h2>
                     
-                    <!-- CV Descarga - Español - Ya funcionaba bien -->
-                    <a href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini.pdf" target="_blank" 
-                       class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0" 
-                       data-lang="es">
-                        <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Full CV
-                    </a>
-                    
-                    <!-- CV Descarga - Inglés - LIMPIADO el style incorrecto, JS ahora lo restaura como flex -->
-                    <a href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini_EN.pdf" target="_blank" 
-                       class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0" 
-                       data-lang="en">
-                        <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Full CV
-                    </a>
-                    
-                    <!-- LinkedIn Link (Mantenemos la consistencia) -->
-                    <a href="https://www.linkedin.com/in/aldo-orsini-8a23782/" target="_blank" 
-                        class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0">
-                        <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                        LinkedIn Profile
-                    </a>
+                    <!-- Lista de enlaces de contacto, imitando la estructura de "Habilidades" -->
+                    <ul class="space-y-4 text-sm font-light">
+                        
+                        <li class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <a  data-lang="es" href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini.pdf" target="_blank" 
+                            class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0">                                
+                                Full CV (ES)
+                            </a>                            
+
+                            <a  data-lang="en" href="https://aldoorsini.github.io/ALO/CV_Aldo_Luis_Orsini_EN.pdf" target="_blank" 
+                            class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0">
+                                Full CV (EN)
+                            </a>                            
+                        </li>
+
+                        <!-- LinkedIn Link -->
+                        <li class="flex items-center space-x-3">
+                            <svg class="w-5 h-5 text-primary-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            <a href="https://www.linkedin.com/in/aldo-orsini-8a23782/" target="_blank" 
+                                class="flex items-center space-x-3 text-sm font-light text-white hover:text-primary-accent transition duration-200 whitespace-nowrap flex-shrink-0">                                
+                                LinkedIn
+                            </a>
+                        </li>
+                    </ul>
                 </div>
                 
                 </div>
